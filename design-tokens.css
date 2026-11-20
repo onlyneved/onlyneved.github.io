@@ -118,7 +118,7 @@
   --decor-star-color-1: rgba(255, 255, 255, 0.9);
   --decor-star-color-2: rgba(183, 196, 240, 0.75);
   --decor-star-color-3: rgba(123, 97, 255, 0.65);
-  --decor-star-size: 150% 150%;
-  --decor-star-motion: star-drift 15s linear infinite alternate;
-  --decor-star-opacity: 0.85;
+  --decor-star-size: 180% 180%;
+  --decor-star-motion: star-drift 18s linear infinite alternate;
+  --decor-star-opacity: 0.92;
 }
