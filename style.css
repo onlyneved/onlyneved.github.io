@@ -5,11 +5,11 @@
    ================================================================ */
 
 /* ---------- Reset & base ---------- */
-* { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  height: 100%;
   width: 100%;
+  height: 100dvh;
   overflow: hidden;
   background: var(--color-bg);
   color: var(--color-text-primary);
@@ -17,7 +17,71 @@ html, body {
   font-size: var(--font-size-body);
   line-height: var(--line-height-normal);
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  position: relative;
+}
+
+/* ---------- Декоративный фон за контентом ---------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  will-change: background-position;
+}
+
+/* ---------- ДЕНЬ: мягкие цветочные элементы ---------- */
+[data-twa-theme="light"] body::before {
+  background-color: transparent;
+  background-image:
+    radial-gradient(700px 520px at 15% 0%, var(--decor-floral-color-1), transparent 52%),
+    radial-gradient(620px 460px at 88% 100%, var(--decor-floral-color-2), transparent 52%),
+    radial-gradient(820px 620px at 42% 62%, var(--decor-floral-color-3), transparent 46%);
+  background-size: var(--decor-floral-size);
+  background-repeat: repeat;
+  opacity: var(--decor-floral-opacity);
+  animation: var(--decor-floral-motion);
+}
+
+/* ---------- НОЧЬ: звёздочки на глубоком фоне ---------- */
+[data-twa-theme="dark"] body::before {
+  background-color: transparent;
+  background-image:
+    radial-gradient(1.5px 1.5px at 11% 18%, var(--decor-star-color-1), transparent),
+    radial-gradient(2px 2px at 28% 52%, var(--decor-star-color-2), transparent),
+    radial-gradient(1.5px 1.5px at 47% 8%, var(--decor-star-color-1), transparent),
+    radial-gradient(2.5px 2.5px at 68% 62%, var(--decor-star-color-3), transparent),
+    radial-gradient(1.5px 1.5px at 88% 38%, var(--decor-star-color-1), transparent),
+    radial-gradient(2px 2px at 12% 78%, var(--decor-star-color-2), transparent),
+    radial-gradient(1.5px 1.5px at 55% 90%, var(--decor-star-color-1), transparent),
+    radial-gradient(2px 2px at 82% 15%, var(--decor-star-color-3), transparent),
+    radial-gradient(1.5px 1.5px at 33% 33%, var(--decor-star-color-1), transparent),
+    radial-gradient(2px 2px at 75% 80%, var(--decor-star-color-2), transparent),
+    radial-gradient(1.5px 1.5px at 95% 55%, var(--decor-star-color-1), transparent),
+    radial-gradient(2px 2px at 40% 70%, var(--decor-star-color-3), transparent);
+  background-size: var(--decor-star-size);
+  background-repeat: repeat;
+  opacity: var(--decor-star-opacity);
+  animation: var(--decor-star-motion);
+}
+
+/* ---------- Ключевые кадры плавного дрейфа ---------- */
+@keyframes floral-drift {
+  0%   { background-position: 0% 0%, 100% 100%, 50% 50%; }
+  100% { background-position: 100% 100%, 0% 0%, 50% 50%; }
+}
+
+@keyframes star-drift {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 50% 50%; }
+}
+
+/* ---------- Доступность: отключить анимацию при prefers-reduced-motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none !important;
+    will-change: auto;
+  }
 }
 
 a { color: inherit; text-decoration: none; }
@@ -39,10 +103,11 @@ input, select {
 
 /* ---------- Safe area для Telegram ---------- */
 body {
+  margin: 0;
   padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
 }
 
 /* ---------- Header ---------- */
@@ -62,8 +127,10 @@ body {
 }
 
 .btn-theme {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: var(--radius-full);
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -76,6 +143,11 @@ body {
 }
 
 .btn-theme:active { transform: scale(0.95); }
+
+.btn-theme:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
 
 .tg-status {
   font-size: var(--font-size-overline);
@@ -112,8 +184,10 @@ body {
 /* ---------- Views ---------- */
 .app-content {
   overflow-y: auto;
-  height: calc(100vh - 56px);
+  height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   padding: var(--space-3) var(--space-4);
+  box-sizing: border-box;
+  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
 }
 
 .view {
@@ -185,7 +259,7 @@ body {
   font-weight: var(--font-weight-semibold);
   border-radius: var(--radius-md);
   background: var(--color-accent-pink);
-  color: #fff;
+  color: var(--color-text-primary);
   white-space: nowrap;
   box-shadow: var(--shadow-sm);
   transition: background-color var(--transition-fast), transform var(--transition-fast);
@@ -193,6 +267,10 @@ body {
 
 .btn-add:hover { background: var(--color-accent-pink-hover); }
 .btn-add:active { transform: scale(0.96); opacity: 0.95; }
+
+[data-twa-theme="dark"] .btn-add {
+  color: #fff;
+}
 
 /* ---------- Repeat options ---------- */
 .task-options {
@@ -280,6 +358,11 @@ body {
   height: 20px;
   accent-color: var(--color-accent-pink);
   flex-shrink: 0;
+}
+
+.task-checkbox:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
 }
 
 .task-title {

@@ -1,39 +1,40 @@
 /* ================================================================
    Telegram Mini App — Design Tokens
-   Нежный девчачий минимализм: розовый / нежно-голубой / циан
-   Светлая и тёмная тема
+   Светлая и тёмная тема через [data-twa-theme]
+   Чистый CSS, без препроцессоров
    ================================================================ */
 
 /* ---------- Светлая тема (по умолчанию) ---------- */
-:root {
+:root,
+[data-twa-theme="light"] {
   /* Фон и поверхности */
-  --color-bg: #FFF8FB;           /* очень светлый розовый */
-  --color-surface: #FFFFFF;      /* белые карточки */
-  --color-surface-hover: #FFF0F5; /* легкий розовый при наведении */
+  --color-bg: #FFF8FB;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #FFF0F5;
 
   /* Текст */
-  --color-text-primary: #4A2C3A;     /* темный розовый-сливовый */
-  --color-text-secondary: #8E7CA8;   /* приглушенный фиолетовый */
-  --color-text-muted: #C9A9C2;       /* светлый розово-фиолетовый */
+  --color-text-primary: #4A2C3A;
+  --color-text-secondary: #6E5C88;
+  --color-text-muted: #8E7CA8;
 
-  /* Границы и тени */
-  --color-border: #FFD1DC;       /* светло-розовый */
-  --color-border-focus: #FF69B4; /* яркий розовый при фокусе */
+  /* Границы */
+  --color-border: #FFB6C1;
+  --color-border-focus: #D63384;
   --color-shadow: rgba(74, 44, 58, 0.08);
 
-  /* Акцентные цвета */
-  --color-accent-pink: #FF69B4;   /* основной акцент — розовый */
-  --color-accent-blue: #87CEEB;   /* нежно-голубой */
-  --color-accent-cyan: #00CED1;   /* циан */
+  /* Акценты */
+  --color-accent-pink: #FF69B4;
   --color-accent-pink-hover: #FF1493;
+  --color-accent-blue: #87CEEB;
   --color-accent-blue-hover: #6495ED;
+  --color-accent-cyan: #00CED1;
   --color-accent-cyan-hover: #008B8B;
 
   /* Состояния */
-  --color-success: #5FB07E;       /* мягкий зеленый */
-  --color-done-bg: #F0F8FF;       /* выполнено — голубоватый */
+  --color-success: #5FB07E;
+  --color-done-bg: #F0F8FF;
   --color-done-text: #87CEEB;
-  --color-danger: #FF9AA2;        /* мягкий красный для удаления */
+  --color-danger: #D32F2F;
 
   /* Типографика */
   --font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -73,11 +74,27 @@
   /* Анимации */
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
+
+  /* Переменные, которые JS перезаписывает из themeParams */
+  --twa-bg: var(--color-bg);
+  --twa-surface: var(--color-surface);
+  --twa-text-primary: var(--color-text-primary);
+  --twa-text-secondary: var(--color-text-secondary);
+  --twa-accent: var(--color-accent-pink);
+  --twa-button-text: #FFFFFF;
+
+  /* ---------- Декоративный фон — дневная тема ---------- */
+  --decor-floral-color-1: #FFB6C1;
+  --decor-floral-color-2: #87CEEB;
+  --decor-floral-color-3: #E6E6FA;
+  --decor-floral-size: 200% 200%;
+  --decor-floral-motion: floral-drift 20s ease-in-out infinite alternate;
+  --decor-floral-opacity: 0.45;
 }
 
 /* ---------- Тёмная тема ---------- */
-[data-theme="dark"] {
-  --color-bg: #1A0A1E;           /* темный сливовый */
+[data-twa-theme="dark"] {
+  --color-bg: #1A0A1E;
   --color-surface: #25152A;
   --color-surface-hover: #3A2540;
   --color-text-primary: #FCE4EC;
@@ -87,22 +104,21 @@
   --color-border-focus: #FF69B4;
   --color-shadow: rgba(0, 0, 0, 0.4);
   --color-accent-pink: #FF80AB;
-  --color-accent-blue: #B3E5FC;
-  --color-accent-cyan: #4DD0E1;
   --color-accent-pink-hover: #FF4081;
+  --color-accent-blue: #B3E5FC;
   --color-accent-blue-hover: #81D4FA;
+  --color-accent-cyan: #4DD0E1;
   --color-accent-cyan-hover: #26C6DA;
   --color-success: #81C784;
   --color-done-bg: #263238;
   --color-done-text: #B3E5FC;
   --color-danger: #EF9A9A;
-}
 
-/* ---------- Telegram WebApp переменные (перекрываются из JS) ---------- */
-:root {
-  --twa-bg: var(--color-bg);
-  --twa-surface: var(--color-surface);
-  --twa-text-primary: var(--color-text-primary);
-  --twa-text-secondary: var(--color-text-secondary);
-  --twa-accent: var(--color-accent-pink);
+  /* ---------- Декоративный фон — ночная тема ---------- */
+  --decor-star-color-1: rgba(255, 255, 255, 0.9);
+  --decor-star-color-2: rgba(183, 196, 240, 0.75);
+  --decor-star-color-3: rgba(123, 97, 255, 0.65);
+  --decor-star-size: 150% 150%;
+  --decor-star-motion: star-drift 15s linear infinite alternate;
+  --decor-star-opacity: 0.85;
 }

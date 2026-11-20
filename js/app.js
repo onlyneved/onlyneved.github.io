@@ -28,65 +28,72 @@ Theme = "light" | "dark"
 
 // ---------------- Telegram Web App integration ----------------
 const Tg = {
-  ready() {
-    if (window.Telegram?.WebApp) {
-      Telegram.WebApp.ready();
-    }
-  },
-
-  expand() {
-    if (window.Telegram?.WebApp) {
-      Telegram.WebApp.expand();
-    }
-  },
-
-  close() {
-    if (window.Telegram?.WebApp) {
-      Telegram.WebApp.close();
-    }
-  },
-
-  haptic(type = "impact_light") {
-    if (window.Telegram?.WebApp?.HapticFeedback) {
-      try { Telegram.WebApp.HapticFeedback[type](); } catch (e) { /* silent */ }
-    }
-  },
-
-  themeParams() {
-    const tp = window.Telegram?.WebApp?.themeParams;
-    return tp || {};
-  },
-
-  init() {
+  /**
+   * Применяет themeParams Telegram к CSS-переменным приложения.
+   * Белый список имён переменных — совпадает с design-tokens.css.
+   * Не мутирует themeParams, не падает вне Telegram.
+   */
+  applyTheme() {
     const wba = window.Telegram?.WebApp;
-    if (!wba) {
-      console.warn("Telegram WebApp API not available (running outside Telegram)");
-      return;
-    }
-    // Apply Telegram theme colors to CSS variables (имена совпадают с design-tokens.css)
+    if (!wba) return;
+
     const tp = wba.themeParams || {};
     const root = document.documentElement;
-    if (tp.bg_color) root.style.setProperty("--color-bg", tp.bg_color);
+
+    // Только ожидаемые переменные (белый список, защита от CSS-инъекций)
+    if (tp.background_color) root.style.setProperty("--color-bg", tp.background_color);
     if (tp.secondary_bg_color) root.style.setProperty("--color-surface", tp.secondary_bg_color);
     if (tp.text_color) root.style.setProperty("--color-text-primary", tp.text_color);
     if (tp.hint_color) root.style.setProperty("--color-text-secondary", tp.hint_color);
-    if (tp.button_color) root.style.setProperty("--color-accent-pink", tp.button_color);
+    if (tp.border_color) root.style.setProperty("--color-border", tp.border_color);
+    if (tp.accent_color) root.style.setProperty("--color-accent-pink", tp.accent_color);
+    if (!tp.accent_color && tp.button_color) root.style.setProperty("--color-accent-pink", tp.button_color); // фолбэк, если нет accent_color
+    if (tp.link_color) root.style.setProperty("--color-accent-blue", tp.link_color);
+    if (tp.button_text_color) root.style.setProperty("--color-text-muted", tp.button_text_color);
 
-    // Dark theme detection from Telegram (упрощённая эвристика по яркости фона)
-    const isDark = this._isDarkColor(tp.bg_color || "#ffffff");
-    if (isDark !== null) {
-      root.setAttribute("data-theme", isDark ? "dark" : "light");
+    // Тёмная/светлая тема: color_scheme — приоритет, яркость фона — fallback
+    const scheme = String(wba.color_scheme || "").toLowerCase();
+    let isDark;
+    if (scheme === "dark") {
+      isDark = true;
+    } else if (scheme === "light") {
+      isDark = false;
+    } else {
+      isDark = this._isDarkColor(tp.background_color || tp.bg_color || "#ffffff");
     }
 
-    wba.ready();
-    wba.expand();
+    root.setAttribute("data-twa-theme", isDark ? "dark" : "light");
+
+    // Синхронизируем стейт приложения, если он есть
+    if (typeof State !== "undefined") {
+      State.theme = isDark ? "dark" : "light";
+    }
   },
 
+  /**
+   * Тактильная обратная связь (вибрация) через Telegram Web App API.
+   * Безопасно вне Telegram — метод отсутствует, значит тихо игнорируется.
+   */
+  haptic(style) {
+    const wba = window.Telegram?.WebApp;
+    if (!wba || typeof wba.hapticFeedback !== "function") return;
+    try {
+      wba.hapticFeedback(style);
+    } catch (e) {
+      console.debug("hapticFeedback skipped:", e);
+    }
+  },
+
+  /**
+   * Эвристика яркости фона: true если тёмный.
+   * Не мутирует входную строку.
+   */
   _isDarkColor(color) {
-    // Эвристика яркости: если фон тёмный — переключаем в тёмную тему
+    if (!color || typeof color !== "string") return null;
     const c = color.replace("#", "");
     if (c.length === 3) {
-      return parseInt(c, 16) > 0x777 ? false : true;
+      const v = parseInt(c, 16);
+      return v > 0x777 ? false : true;
     }
     if (c.length === 6) {
       const r = parseInt(c.substring(0, 2), 16);
@@ -97,7 +104,48 @@ const Tg = {
     }
     return null;
   },
+
+  init() {
+    const wba = window.Telegram?.WebApp;
+    if (!wba) {
+      console.warn("Telegram WebApp API not available (running outside Telegram)");
+      return;
+    }
+
+    this.applyTheme();
+
+    // Обработчик смены темы в реальном времени
+    try {
+      if (typeof wba.onEvent === "function") {
+        wba.onEvent("themeChanged", () => {
+          this.applyTheme();
+        });
+      }
+      if (typeof wba.ready === "function") wba.ready();
+      if (typeof wba.expand === "function") wba.expand();
+    } catch (e) {
+      console.warn("Telegram WebApp init failed:", e);
+    }
+  },
 };
+
+/**
+ * Очищает инлайновые переопределения themeParams, чтобы ручная тема (data-twa-theme) заработала.
+ * Вызывать при ручном переключении темы пользователем.
+ */
+function clearThemeOverrides() {
+  const root = document.documentElement;
+  [
+    "--color-bg",
+    "--color-surface",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--color-accent-pink",
+    "--color-border",
+    "--color-accent-blue",
+    "--color-text-muted",
+  ].forEach((v) => root.style.removeProperty(v));
+}
 
 // ---------------- Storage layer (immutable) ----------------
 const Storage = {
@@ -118,7 +166,6 @@ const Storage = {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
       console.error(`Storage write error for ${key}:`, e);
-      throw e;
     }
   },
 
@@ -209,6 +256,7 @@ const refs = {
   views: $$(".view"),
   taskDate: $("#taskDate"),
   taskTitle: $("#taskTitle"),
+  weekdaysContainer: $("#weekdays"),
   btnAddTask: $("#btnAddTask"),
   taskRepeat: $("#taskRepeat"),
   weekdays: $$(".weekday"),
@@ -241,7 +289,7 @@ function render() {
   });
 
   // Theme attribute
-  document.documentElement.setAttribute("data-theme", State.theme);
+  document.documentElement.setAttribute("data-twa-theme", State.theme);
 
   // Theme button label
   refs.btnTheme.textContent = State.theme === "dark" ? "Светлая" : "Тёмная";
@@ -258,7 +306,7 @@ function renderTasks() {
 
   // Repeat weekday UI
   refs.taskRepeat.checked = State.repeatWeekdays.length > 0;
-  $("#weekdays").style.display = State.repeatWeekdays.length ? "block" : "none";
+  refs.weekdaysContainer.style.display = State.repeatWeekdays.length ? "block" : "none";
   refs.weekdays.forEach((cb) => {
     cb.checked = State.repeatWeekdays.includes(Number(cb.value));
   });
@@ -361,13 +409,13 @@ function renderWishlist() {
           a.href = w.url;
           a.target = "_blank";
           a.rel = "noopener";
-          a.style.cssText = "color:var(--accent-color);font-size:12px;margin-left:6px;";
+          a.style.cssText = "color:var(--color-accent-pink);font-size:12px;margin-left:6px;";
           a.textContent = "Ссылка";
           metaEl.appendChild(document.createTextNode(" "));
           metaEl.appendChild(a);
         }
       } catch (e) {
-        // Некорректный URL — просто не показываем ссылку
+        console.debug("Wishlist URL skipped (invalid):", e);
       }
     }
 
@@ -376,15 +424,15 @@ function renderWishlist() {
 }
 
 // ---------------- Event handlers ----------------
-function initEventListeners() {
-  // Theme toggle
+function initThemeListeners() {
+  if (!refs.btnTheme) return;
   refs.btnTheme.addEventListener("click", () => {
     const next = State.theme === "light" ? "dark" : "light";
     setTheme(next);
-    Tg.haptic("impact_light");
   });
+}
 
-  // Tabs
+function initTabListeners() {
   refs.tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       State.activeTab = tab.dataset.tab;
@@ -392,15 +440,15 @@ function initEventListeners() {
       Tg.haptic("selection");
     });
   });
+}
 
-  // Date change
+function initTaskListeners() {
   refs.taskDate.addEventListener("change", (e) => {
     State.selectedDate = e.target.value;
     State.repeatWeekdays = [];
     render();
   });
 
-  // Repeat checkbox
   refs.taskRepeat.addEventListener("change", (e) => {
     if (!e.target.checked) {
       State.repeatWeekdays = [];
@@ -408,7 +456,6 @@ function initEventListeners() {
     render();
   });
 
-  // Weekday checkboxes
   refs.weekdays.forEach((cb) => {
     cb.addEventListener("change", (e) => {
       const val = Number(e.target.value);
@@ -421,15 +468,13 @@ function initEventListeners() {
     });
   });
 
-  // Add task
   refs.btnAddTask.addEventListener("click", addTask);
   refs.taskTitle.addEventListener("keydown", (e) => {
     if (e.key === "Enter") addTask();
   });
 
-  // Task list delegation (checkbox + delete)
   refs.taskList.addEventListener("click", (e) => {
-    const id = e.target.dataset.id;
+    const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
     if (e.target.classList.contains("task-checkbox")) {
       toggleTask(id);
@@ -443,31 +488,41 @@ function initEventListeners() {
       editTaskTitle(id);
     }
   });
+}
 
-  // Add shopping
+function initShoppingListeners() {
   refs.btnAddShopping.addEventListener("click", addShopping);
   refs.shoppingTitle.addEventListener("keydown", (e) => {
     if (e.key === "Enter") addShopping();
   });
 
   refs.shoppingList.addEventListener("click", (e) => {
-    const id = e.target.dataset.id;
+    const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
     if (e.target.classList.contains("task-checkbox")) toggleShopping(id);
     else if (e.target.classList.contains("btn-delete")) deleteShopping(id);
   });
+}
 
-  // Add wish
+function initWishlistListeners() {
   refs.btnAddWish.addEventListener("click", addWish);
   refs.wishTitle.addEventListener("keydown", (e) => {
     if (e.key === "Enter") addWish();
   });
 
   refs.wishlistList.addEventListener("click", (e) => {
-    const id = e.target.dataset.id;
+    const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
     if (e.target.classList.contains("btn-delete")) deleteWish(id);
   });
+}
+
+function initEventListeners() {
+  initThemeListeners();
+  initTabListeners();
+  initTaskListeners();
+  initShoppingListeners();
+  initWishlistListeners();
 }
 
 // ---------------- Actions (immutable) ----------------
@@ -476,7 +531,7 @@ function safeStorage(fn, fallbackMsg = "Не удалось сохранить �
     return fn();
   } catch (e) {
     console.error("Storage error:", e);
-    alert(fallbackMsg);
+    console.warn(fallbackMsg);
     return null;
   }
 }
@@ -616,13 +671,21 @@ function deleteWish(id) {
 
 // Theme
 function setTheme(theme) {
-  State.theme = theme;
+  if (typeof State !== "undefined") {
+    State.theme = theme;
+  }
+  const root = document.documentElement;
+  root.setAttribute("data-twa-theme", theme);
+  clearThemeOverrides();
   const saved = safeStorage(() => {
     Storage.write(STORAGE_KEYS.theme, theme);
     return theme;
   });
-  if (saved === null) return;
   render();
+  if (saved === null) return;
+  if (typeof Tg !== "undefined" && typeof Tg.haptic === "function") {
+    Tg.haptic("impact_light");
+  }
 }
 
 // ---------------- Helpers ----------------
@@ -651,19 +714,8 @@ function init() {
   initEventListeners();
   render();
 
-  // Sync theme from Telegram themeParams on load (имена совпадают с design-tokens.css)
-  const tp = Tg.themeParams();
-  if (tp.bg_color) {
-    const root = document.documentElement;
-    if (tp.bg_color) root.style.setProperty("--color-bg", tp.bg_color);
-    if (tp.secondary_bg_color) root.style.setProperty("--color-surface", tp.secondary_bg_color);
-    if (tp.text_color) root.style.setProperty("--color-text-primary", tp.text_color);
-    if (tp.hint_color) root.style.setProperty("--color-text-secondary", tp.hint_color);
-    if (tp.button_color) root.style.setProperty("--color-accent-pink", tp.button_color);
-  }
-
   // Mark Telegram as available
-  refs.tgStatus.textContent = window.Telegram?.WebApp ? "Telegram ✓" : "Telegram (offline)";
+  refs.tgStatus.textContent = window.Telegram?.WebApp ? "Telegram (online)" : "Telegram (offline)";
 }
 
 // Start when DOM ready
