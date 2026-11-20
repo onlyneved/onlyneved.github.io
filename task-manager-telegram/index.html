@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FFF8FB">
+  <title>Милые дела — Задачи, Покупки, Вишлист</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="design-tokens.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <button class="btn-theme" id="btnTheme" aria-label="Переключить тему">Тема</button>
+      <h1>Mini App</h1>
+      <span id="tgStatus" class="tg-status">Telegram</span>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="tasks" aria-pressed="true">Задачи</button>
+      <button class="tab" data-tab="shopping">Покупки</button>
+      <button class="tab" data-tab="wishlist">Вишлист</button>
+    </nav>
+
+    <main class="app-content">
+      <!-- Задачи -->
+      <section id="view-tasks" class="view active">
+        <div class="date-picker">
+          <label for="taskDate">Дата:</label>
+          <input type="date" id="taskDate" />
+        </div>
+
+        <div class="task-input">
+          <input type="text" id="taskTitle" placeholder="Новая задача..." maxlength="200" />
+          <button class="btn-add" id="btnAddTask">Добавить</button>
+        </div>
+
+        <div class="task-options">
+          <label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;">
+            <input type="checkbox" id="taskRepeat" />
+            Повторять по дням недели
+          </label>
+          <div id="weekdays" style="display:none;margin-top:4px;">
+            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+              <input type="checkbox" class="weekday" value="0" /> Вс
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+              <input type="checkbox" class="weekday" value="1" /> Пн
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+              <input type="checkbox" class="weekday" value="2" /> Вт
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+              <input type="checkbox" class="weekday" value="3" /> Ср
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+              <input type="checkbox" class="weekday" value="4" /> Чт
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+              <input type="checkbox" class="weekday" value="5" /> Пт
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;">
+              <input type="checkbox" class="weekday" value="6" /> Сб
+            </label>
+          </div>
+        </div>
+
+        <div class="suggestions" id="suggestions" style="display:none;">
+          <div class="suggestions-title">Предложить из других дней:</div>
+          <div class="suggestions-list" id="suggestionsList"></div>
+        </div>
+
+        <ul class="task-list" id="taskList"></ul>
+        <div class="empty" id="emptyTasks">Нет задач на этот день</div>
+      </section>
+
+      <!-- Покупки -->
+      <section id="view-shopping" class="view">
+        <div class="task-input">
+          <input type="text" id="shoppingTitle" placeholder="Новый товар..." maxlength="200" />
+          <button class="btn-add" id="btnAddShopping">Добавить</button>
+        </div>
+        <ul class="task-list" id="shoppingList"></ul>
+        <div class="empty" id="emptyShopping">Список покупок пуст</div>
+      </section>
+
+      <!-- Вишлист -->
+      <section id="view-wishlist" class="view">
+        <div class="task-input" style="flex-wrap:wrap;">
+          <input type="text" id="wishTitle" placeholder="Что хотелось бы..." maxlength="200" style="flex:1;min-width:140px;" />
+          <select id="wishPriority" style="padding:10px 8px;font-size:14px;border:1px solid var(--tg-hint-color,rgba(0,0,0,0.2));border-radius:8px;background:var(--tg-bg-color,#fff);color:var(--tg-text-color,#000);">
+            <option value="medium">Обычный</option>
+            <option value="high">Важный</option>
+            <option value="low">Низкий</option>
+          </select>
+          <input type="url" id="wishUrl" placeholder="Ссылка (опц.)" style="flex:1;min-width:140px;padding:10px 12px;font-size:14px;border:1px solid var(--tg-hint-color,rgba(0,0,0,0.2));border-radius:8px;background:var(--tg-bg-color,#fff);color:var(--tg-text-color,#000);" />
+          <button class="btn-add" id="btnAddWish">Добавить</button>
+        </div>
+        <ul class="task-list" id="wishlistList"></ul>
+        <div class="empty" id="emptyWishlist">Вишлист пуст</div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
