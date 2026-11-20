@@ -1,0 +1,124 @@
+/* ================================================================
+   Telegram Mini App — Design Tokens
+   Светлая и тёмная тема через [data-twa-theme]
+   Чистый CSS, без препроцессоров
+   ================================================================ */
+
+/* ---------- Светлая тема (по умолчанию) ---------- */
+:root,
+[data-twa-theme="light"] {
+  /* Фон и поверхности */
+  --color-bg: #FFF8FB;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #FFF0F5;
+
+  /* Текст */
+  --color-text-primary: #4A2C3A;
+  --color-text-secondary: #6E5C88;
+  --color-text-muted: #8E7CA8;
+
+  /* Границы */
+  --color-border: #FFB6C1;
+  --color-border-focus: #D63384;
+  --color-shadow: rgba(74, 44, 58, 0.08);
+
+  /* Акценты */
+  --color-accent-pink: #FF69B4;
+  --color-accent-pink-hover: #FF1493;
+  --color-accent-blue: #87CEEB;
+  --color-accent-blue-hover: #6495ED;
+  --color-accent-cyan: #00CED1;
+  --color-accent-cyan-hover: #008B8B;
+
+  /* Состояния */
+  --color-success: #5FB07E;
+  --color-done-bg: #F0F8FF;
+  --color-done-text: #87CEEB;
+  --color-danger: #D32F2F;
+
+  /* Типографика */
+  --font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-overline: 10px;
+  --font-size-caption: 11px;
+  --font-size-body: 13px;
+  --font-size-subtitle: 14px;
+  --font-size-h1: 18px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+
+  /* Отступы */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Радиусы */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Тени */
+  --shadow-sm: 0 1px 3px 0 var(--color-shadow);
+  --shadow-md: 0 4px 12px 0 var(--color-shadow);
+
+  /* Анимации */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+
+  /* Переменные, которые JS перезаписывает из themeParams */
+  --twa-bg: var(--color-bg);
+  --twa-surface: var(--color-surface);
+  --twa-text-primary: var(--color-text-primary);
+  --twa-text-secondary: var(--color-text-secondary);
+  --twa-accent: var(--color-accent-pink);
+  --twa-button-text: #FFFFFF;
+
+  /* ---------- Декоративный фон — дневная тема ---------- */
+  --decor-floral-color-1: #FFB6C1;
+  --decor-floral-color-2: #87CEEB;
+  --decor-floral-color-3: #E6E6FA;
+  --decor-floral-size: 200% 200%;
+  --decor-floral-motion: floral-drift 20s ease-in-out infinite alternate;
+  --decor-floral-opacity: 0.45;
+}
+
+/* ---------- Тёмная тема ---------- */
+[data-twa-theme="dark"] {
+  --color-bg: #1A0A1E;
+  --color-surface: #25152A;
+  --color-surface-hover: #3A2540;
+  --color-text-primary: #FCE4EC;
+  --color-text-secondary: #D1C4E9;
+  --color-text-muted: #B39DDB;
+  --color-border: #4A2C3A;
+  --color-border-focus: #FF69B4;
+  --color-shadow: rgba(0, 0, 0, 0.4);
+  --color-accent-pink: #FF80AB;
+  --color-accent-pink-hover: #FF4081;
+  --color-accent-blue: #B3E5FC;
+  --color-accent-blue-hover: #81D4FA;
+  --color-accent-cyan: #4DD0E1;
+  --color-accent-cyan-hover: #26C6DA;
+  --color-success: #81C784;
+  --color-done-bg: #263238;
+  --color-done-text: #B3E5FC;
+  --color-danger: #EF9A9A;
+
+  /* ---------- Декоративный фон — ночная тема ---------- */
+  --decor-star-color-1: rgba(255, 255, 255, 0.9);
+  --decor-star-color-2: rgba(183, 196, 240, 0.75);
+  --decor-star-color-3: rgba(123, 97, 255, 0.65);
+  --decor-star-size: 150% 150%;
+  --decor-star-motion: star-drift 15s linear infinite alternate;
+  --decor-star-opacity: 0.85;
+}
