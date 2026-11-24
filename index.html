@@ -18,17 +18,25 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="sakura-container" class="sakura-container" aria-hidden="true"></div>
+  <div id="comet-container" class="comet-container" aria-hidden="true"></div>
+  <div id="undo-toast" class="undo-toast" aria-hidden="true">
+    <span id="undo-message">Задача удалена</span>
+    <button id="undo-btn" class="btn-add">Отменить</button>
+  </div>
   <div id="app">
     <header class="app-header">
       <button class="btn-theme" id="btnTheme" aria-label="Переключить тему">Тема</button>
-      <h1>Mini App</h1>
-      <span id="tgStatus" class="tg-status">Telegram</span>
-    </header>
+      <h1>Милые дела</h1>
+      <div class="header-spacer"></div>
+          </header>
 
     <nav class="tabs">
       <button class="tab active" data-tab="tasks" aria-pressed="true">Задачи</button>
       <button class="tab" data-tab="shopping">Покупки</button>
       <button class="tab" data-tab="wishlist">Вишлист</button>
+      <button class="tab" data-tab="piggybank">Копилка</button>
+      <button class="tab" data-tab="habits">Привычки</button>
     </nav>
 
     <main class="app-content">
@@ -45,30 +53,30 @@
         </div>
 
         <div class="task-options">
-          <label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;">
+          <label class="task-repeat-label">
             <input type="checkbox" id="taskRepeat" />
             Повторять по дням недели
           </label>
-          <div id="weekdays" style="display:none;margin-top:4px;">
-            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+          <div id="weekdays">
+            <label class="weekday-label">
               <input type="checkbox" class="weekday" value="0" /> Вс
             </label>
-            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+            <label class="weekday-label">
               <input type="checkbox" class="weekday" value="1" /> Пн
             </label>
-            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+            <label class="weekday-label">
               <input type="checkbox" class="weekday" value="2" /> Вт
             </label>
-            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+            <label class="weekday-label">
               <input type="checkbox" class="weekday" value="3" /> Ср
             </label>
-            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+            <label class="weekday-label">
               <input type="checkbox" class="weekday" value="4" /> Чт
             </label>
-            <label style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;cursor:pointer;">
+            <label class="weekday-label">
               <input type="checkbox" class="weekday" value="5" /> Пт
             </label>
-            <label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;">
+            <label class="weekday-label">
               <input type="checkbox" class="weekday" value="6" /> Сб
             </label>
           </div>
@@ -89,24 +97,56 @@
           <input type="text" id="shoppingTitle" placeholder="Новый товар..." maxlength="200" />
           <button class="btn-add" id="btnAddShopping">Добавить</button>
         </div>
+        <div class="shopping-actions" style="display:flex;gap:var(--space-2);margin-bottom:var(--space-3);">
+          <button class="btn-add" id="btnClearAllShopping">Очистить весь список</button>
+<button class="btn-add" id="btnDeleteCompletedShopping">Удалить купленное</button>
+        </div>
         <ul class="task-list" id="shoppingList"></ul>
         <div class="empty" id="emptyShopping">Список покупок пуст</div>
       </section>
 
       <!-- Вишлист -->
       <section id="view-wishlist" class="view">
-        <div class="task-input" style="flex-wrap:wrap;">
+        <div class="task-input wish-input-row" style="flex-wrap:wrap;">
           <input type="text" id="wishTitle" placeholder="Что хотелось бы..." maxlength="200" style="flex:1;min-width:140px;" />
-          <select id="wishPriority" style="padding:10px 8px;font-size:14px;border:1px solid var(--color-border);border-radius:8px;background:var(--color-surface);color:var(--color-text-primary);">
+          <select id="wishPriority" class="wish-select">
             <option value="medium">Обычный</option>
             <option value="high">Важный</option>
             <option value="low">Низкий</option>
           </select>
-          <input type="url" id="wishUrl" placeholder="Ссылка (опц.)" style="flex:1;min-width:140px;padding:10px 12px;font-size:14px;border:1px solid var(--color-border);border-radius:8px;background:var(--color-surface);color:var(--color-text-primary);" />
+          <div class="wish-url-price-row">
+            <input type="url" id="wishUrl" placeholder="Ссылка (опц.)" class="wish-input" />
+            <input type="number" id="wishPrice" placeholder="Стоимость (BYN)" class="wish-input wish-price" min="0" step="0.01" />
+          </div>
           <button class="btn-add" id="btnAddWish">Добавить</button>
         </div>
         <ul class="task-list" id="wishlistList"></ul>
         <div class="empty" id="emptyWishlist">Вишлист пуст</div>
+      </section>
+
+      <!-- Копилка -->
+      <section id="view-piggybank" class="view">
+        <div class="piggybank-balance">
+          <span class="piggybank-balance-label">Общая сумма</span>
+          <span class="piggybank-balance-value" id="piggybankTotal">0,00 BYN</span>
+        </div>
+        <div class="piggybank-input-group">
+          <input type="text" id="piggybankAmount" inputmode="numeric" placeholder="Сумма (BYN)" maxlength="20" />
+          <button class="btn-add" id="btnAddPiggybank" disabled>Добавить</button>
+        </div>
+        <p id="piggybankError" class="screen-hint" style="color:var(--color-error-pink); display:none;">Введите сумму больше 0</p>
+        <ul class="task-list" id="piggybankList"></ul>
+        <div class="empty" id="emptyPiggybank">Копилка пока пуста. Положите первую сумму — начните накапливать.</div>
+      </section>
+
+      <!-- Привычки -->
+      <section id="view-habits" class="view">
+        <div class="habit-input">
+          <input type="text" id="habitTitle" placeholder="Новая привычка..." maxlength="100" />
+          <button class="btn-add habit-add-btn" id="habitAddBtn">Добавить</button>
+        </div>
+        <ul class="habit-list" id="habitList"></ul>
+        <div class="empty" id="emptyHabits">Нет привычек. Добавь первую — начни путь к цели.</div>
       </section>
     </main>
   </div>
