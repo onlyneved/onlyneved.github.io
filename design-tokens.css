@@ -11,16 +11,22 @@
   --color-bg: #FFF8FB;
   --color-surface: #FFFFFF;
   --color-surface-hover: #FFF0F5;
+  --color-surface-pink: #FFF0F5;
 
   /* Текст */
   --color-text-primary: #4A2C3A;
-  --color-text-secondary: #6E5C88;
-  --color-text-muted: #8E7CA8;
+  --color-text-secondary: #5A4678;
+  --color-text-muted: #7A6AA0;
+  --color-text-secondary-pink: #D63384;
+  --color-text-pink: #D63384;
+  --color-text-on-pink: #FFFFFF;
 
   /* Границы */
-  --color-border: #FFB6C1;
+  --color-border: #FF9AA8;
+  --color-border-pink: #D63384;
   --color-border-focus: #D63384;
   --color-shadow: rgba(74, 44, 58, 0.08);
+  --color-shadow-input-focus: 0 0 0 2px rgba(214, 51, 132, 0.3);
 
   /* Акценты */
   --color-accent-pink: #FF69B4;
@@ -36,6 +42,17 @@
   --color-done-text: #87CEEB;
   --color-danger: #D32F2F;
 
+  /* Ошибки */
+  --color-error-pink: #D63384;
+
+  /* Радиусы */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  --radius-btn: 20px;
+
   /* Типографика */
   --font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -47,6 +64,7 @@
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
+  --font-weight-bold: 700;
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
 
@@ -70,6 +88,7 @@
   /* Тени */
   --shadow-sm: 0 1px 3px 0 var(--color-shadow);
   --shadow-md: 0 4px 12px 0 var(--color-shadow);
+  --shadow-lg: 0 8px 24px 0 var(--color-shadow);
 
   /* Анимации */
   --transition-fast: 150ms ease;
@@ -83,6 +102,40 @@
   --twa-accent: var(--color-accent-pink);
   --twa-button-text: #FFFFFF;
 
+  /* ---------- Кнопки ---------- */
+  --color-btn-primary-bg: var(--color-accent-pink);
+  --color-btn-primary-bg-hover: var(--color-accent-pink-hover);
+  --color-btn-primary-text: var(--color-text-on-pink);
+  --color-btn-secondary-bg: var(--color-surface-hover);
+  --color-btn-secondary-text: var(--color-text-primary);
+  --color-btn-delete-bg: rgba(211, 47, 47, 0.06);
+  --color-btn-delete-bg-hover: rgba(211, 47, 47, 0.14);
+  --color-btn-delete-text: var(--color-danger);
+
+  /* ---------- Инпуты и селекты ---------- */
+  --color-input-border: var(--color-border);
+  --color-input-border-focus: var(--color-border-focus);
+  --color-input-bg: var(--color-surface);
+  --color-shadow-input-focus: 0 0 0 3px rgba(214, 51, 132, 0.12);
+
+  /* ---------- Карточки ---------- */
+  --color-card-bg: var(--color-surface);
+  --color-card-border: var(--color-border);
+  --color-card-shadow: var(--shadow-sm);
+  --color-card-hover-shadow: var(--shadow-md);
+
+  /* ---------- Разделы ---------- */
+  --color-section-bg: transparent;
+  --color-section-border: none;
+
+  /* ---------- Пустые состояния ---------- */
+  --color-empty-text: var(--color-text-secondary);
+
+  /* ---------- Хэдер и табы ---------- */
+  --color-header-bg: var(--color-surface);
+  --color-header-border: var(--color-border);
+  --color-tab-active-bg: rgba(214, 51, 132, 0.06);
+
   /* ---------- Декоративный фон — дневная тема ---------- */
   --decor-floral-color-1: #FFB6C1;
   --decor-floral-color-2: #87CEEB;
@@ -90,7 +143,18 @@
   --decor-floral-size: 200% 200%;
   --decor-floral-motion: floral-drift 20s ease-in-out infinite alternate;
   --decor-floral-opacity: 0.45;
+
+  /* ---------- Копилка — токены выделения баланса (светлая тема) ---------- */
+  --piggybank-bg: var(--color-surface-pink);
+  --piggybank-border: var(--color-border-pink);
+  --piggybank-shadow: 0 4px 12px rgba(217, 106, 168, 0.12);
+  --piggybank-radius: var(--radius-xl);
+
+  /* ---------- Лепестки сакуры (только дневная тема) ---------- */
+  --sakura-petal-color-1: rgba(217, 106, 168, 0.35);
+  --sakura-petal-color-2: rgba(217, 106, 168, 0.20);
 }
+
 
 /* ---------- Тёмная тема ---------- */
 [data-twa-theme="dark"] {
@@ -103,6 +167,7 @@
   --color-border: #4A2C3A;
   --color-border-focus: #FF69B4;
   --color-shadow: rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px 0 rgba(0, 0, 0, 0.5);
   --color-accent-pink: #FF80AB;
   --color-accent-pink-hover: #FF4081;
   --color-accent-blue: #B3E5FC;
@@ -112,7 +177,42 @@
   --color-success: #81C784;
   --color-done-bg: #263238;
   --color-done-text: #B3E5FC;
+  --font-weight-bold: 700;
   --color-danger: #EF9A9A;
+
+  /* ---------- Кнопки ---------- */
+  --color-btn-primary-bg: var(--color-accent-pink);
+  --color-btn-primary-bg-hover: var(--color-accent-pink-hover);
+  --color-btn-primary-text: var(--color-text-on-pink);
+  --color-btn-secondary-bg: var(--color-surface-hover);
+  --color-btn-secondary-text: var(--color-text-primary);
+  --color-btn-delete-bg: rgba(255, 174, 182, 0.10);
+  --color-btn-delete-bg-hover: rgba(255, 174, 182, 0.20);
+  --color-btn-delete-text: var(--color-danger);
+
+  /* ---------- Инпуты и селекты ---------- */
+  --color-input-border: var(--color-border);
+  --color-input-border-focus: var(--color-border-focus);
+  --color-input-bg: var(--color-surface);
+  --color-shadow-input-focus: 0 0 0 3px rgba(255, 128, 171, 0.18);
+
+  /* ---------- Карточки ---------- */
+  --color-card-bg: var(--color-surface);
+  --color-card-border: var(--color-border);
+  --color-card-shadow: var(--shadow-sm);
+  --color-card-hover-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.25);
+
+  /* ---------- Разделы ---------- */
+  --color-section-bg: transparent;
+  --color-section-border: none;
+
+  /* ---------- Пустые состояния ---------- */
+  --color-empty-text: var(--color-text-secondary);
+
+  /* ---------- Хэдер и табы ---------- */
+  --color-header-bg: var(--color-surface);
+  --color-header-border: var(--color-border);
+  --color-tab-active-bg: rgba(255, 128, 171, 0.10);
 
   /* ---------- Декоративный фон — ночная тема ---------- */
   --decor-star-color-1: rgba(255, 255, 255, 0.9);
@@ -121,4 +221,15 @@
   --decor-star-size: 180% 180%;
   --decor-star-motion: star-drift 18s linear infinite alternate;
   --decor-star-opacity: 0.92;
+
+  /* ---------- Копилка — токены выделения баланса (тёмная тема) ---------- */
+  --piggybank-bg: rgba(217, 106, 168, 0.10);
+  --piggybank-border: rgba(217, 106, 168, 0.30);
+  --piggybank-shadow: 0 4px 12px rgba(217, 106, 168, 0.20);
+  --piggybank-radius: var(--radius-xl);
+
+  /* ---------- Лепестки сакуры (только дневная тема) ---------- */
+  --sakura-petal-color-1: rgba(217, 106, 168, 0.35);
+  --sakura-petal-color-2: rgba(217, 106, 168, 0.20);
 }
+
