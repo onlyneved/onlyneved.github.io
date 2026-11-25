@@ -33,7 +33,7 @@ let undoTimeoutId = null;
 /*
 Task  = { id: string, title: string, done: boolean, date: string, weekdays: number[], createdAt: string }
 Item  = { id: string, title: string, done: boolean, createdAt: string }
-Wish  = { id: string, title: string, priority: string, url: string, price: number | null, createdAt: string }
+Wish  = { id: string, title: string, url: string, price: number | null, createdAt: string }
 Theme = "light" | "dark"
 Habit = { id: string, title: string, streak: number, lastDoneDate: string | null, consecutiveMisses: number, createdAt: string }
 */
@@ -317,9 +317,9 @@ const refs = {
   shoppingList: $("#shoppingList"),
   emptyShopping: $("#emptyShopping"),
   wishTitle: $("#wishTitle"),
-  wishPriority: $("#wishPriority"),
   wishUrl: $("#wishUrl"),
   wishPrice: $("#wishPrice"),
+
   btnAddWish: $("#btnAddWish"),
   wishlistList: $("#wishlistList"),
   emptyWishlist: $("#emptyWishlist"),
@@ -496,12 +496,6 @@ function renderWishlist() {
   refs.wishlistList.innerHTML = "";
   refs.emptyWishlist.classList.toggle("show", State.wishlist.length === 0);
 
-  const PRIORITY_META = {
-    high: { label: "Важный", cls: "priority-high" },
-    medium: { label: "Обычный", cls: "priority-medium" },
-    low: { label: "Низкий", cls: "priority-low" },
-  };
-
   State.wishlist.forEach((w) => {
     const li = document.createElement("li");
     li.className = `task-item wish-item ${w.purchased ? "purchased" : ""}`;
@@ -512,13 +506,6 @@ function renderWishlist() {
 
     const metaEl = document.createElement("div");
     metaEl.className = "wish-meta";
-
-    // Приоритет — красивый бейдж в стиле приложения
-    const prio = PRIORITY_META[w.priority] || PRIORITY_META.medium;
-    const priorityBadge = document.createElement("span");
-    priorityBadge.className = `wish-priority-badge ${prio.cls}`;
-    priorityBadge.textContent = prio.label;
-    metaEl.appendChild(priorityBadge);
 
     // Стоимость — красивый ценник в стиле приложения
     if (w.price != null) {
@@ -991,7 +978,6 @@ function addWish() {
   const wish = {
     id: Id.next(),
     title: titleRes.value,
-    priority: refs.wishPriority.value,
     url: urlRes.value,
     price: priceRes.value,
     purchased: false,
@@ -1003,7 +989,6 @@ function addWish() {
   refs.wishTitle.value = "";
   refs.wishUrl.value = "";
   refs.wishPrice.value = "";
-  refs.wishPriority.value = "medium";
   render();
   Tg.haptic("impact_light");
 }
