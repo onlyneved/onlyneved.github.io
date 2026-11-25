@@ -496,30 +496,40 @@ function renderWishlist() {
   refs.wishlistList.innerHTML = "";
   refs.emptyWishlist.classList.toggle("show", State.wishlist.length === 0);
 
+  const PRIORITY_META = {
+    high: { label: "Важный", cls: "priority-high" },
+    medium: { label: "Обычный", cls: "priority-medium" },
+    low: { label: "Низкий", cls: "priority-low" },
+  };
+
   State.wishlist.forEach((w) => {
     const li = document.createElement("li");
-    li.className = "task-item wish-item";
+    li.className = `task-item wish-item ${w.purchased ? "purchased" : ""}`;
 
     const titleEl = document.createElement("div");
-    titleEl.style.flex = "1";
+    titleEl.className = "wish-title";
     titleEl.textContent = w.title;
 
-    const metaEl = document.createElement("span");
+    const metaEl = document.createElement("div");
     metaEl.className = "wish-meta";
-    const priceText = w.price != null ? ` ${Number(w.price).toFixed(2)} BYN` : "";
-    metaEl.textContent = `${w.priority}${priceText}`;
 
-    const delBtn = document.createElement("button");
-    delBtn.className = "btn-delete";
-    delBtn.dataset.id = w.id;
-    delBtn.title = "Удалить";
-    delBtn.textContent = "×";
+    // Приоритет — красивый бейдж в стиле приложения
+    const prio = PRIORITY_META[w.priority] || PRIORITY_META.medium;
+    const priorityBadge = document.createElement("span");
+    priorityBadge.className = `wish-priority-badge ${prio.cls}`;
+    priorityBadge.textContent = prio.label;
+    metaEl.appendChild(priorityBadge);
 
-    li.appendChild(titleEl);
-    li.appendChild(metaEl);
-    li.appendChild(delBtn);
+    // Стоимость — красивый ценник в стиле приложения
+    if (w.price != null) {
+      const priceBadge = document.createElement("span");
+      priceBadge.className = "wish-price-badge";
+      priceBadge.textContent = `${Number(w.price).toFixed(2)} BYN`;
+      metaEl.appendChild(document.createTextNode(" "));
+      metaEl.appendChild(priceBadge);
+    }
 
-    // Ссылка добавляем только для http(s) — защита от javascript:/data: протоколов
+    // Ссылка — только для http(s)
     if (w.url) {
       try {
         const u = new URL(w.url);
@@ -528,7 +538,7 @@ function renderWishlist() {
           a.href = w.url;
           a.target = "_blank";
           a.rel = "noopener";
-          a.style.cssText = "color:var(--color-accent-pink);font-size:12px;margin-left:6px;";
+          a.className = "wish-link";
           a.textContent = "Ссылка";
           metaEl.appendChild(document.createTextNode(" "));
           metaEl.appendChild(a);
@@ -537,6 +547,24 @@ function renderWishlist() {
         console.debug("Wishlist URL skipped (invalid):", e);
       }
     }
+
+    // Кнопка «Купил(а)»
+    const buyBtn = document.createElement("button");
+    buyBtn.className = `wish-buy-btn ${w.purchased ? "purchased" : ""}`;
+    buyBtn.dataset.id = w.id;
+    buyBtn.textContent = w.purchased ? "Куплено ✓" : "Купил(а)";
+
+    // Кнопка удаления
+    const delBtn = document.createElement("button");
+    delBtn.className = "btn-delete";
+    delBtn.dataset.id = w.id;
+    delBtn.title = "Удалить";
+    delBtn.textContent = "×";
+
+    li.appendChild(titleEl);
+    li.appendChild(metaEl);
+    li.appendChild(buyBtn);
+    li.appendChild(delBtn);
 
     refs.wishlistList.appendChild(li);
   });
@@ -636,7 +664,13 @@ function initWishlistListeners() {
   refs.wishlistList.addEventListener("click", (e) => {
     const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
-    if (e.target.classList.contains("btn-delete")) deleteWish(id);
+    if (e.target.classList.contains("wish-buy-btn")) {
+      e.stopPropagation();
+      toggleWishPurchase(id);
+    } else if (e.target.classList.contains("btn-delete")) {
+      e.stopPropagation();
+      deleteWish(id);
+    }
   });
 }
 
@@ -960,6 +994,7 @@ function addWish() {
     priority: refs.wishPriority.value,
     url: urlRes.value,
     price: priceRes.value,
+    purchased: false,
     createdAt: "",
   };
   const next = safeStorage(() => Storage.addItem(STORAGE_KEYS.wishlist, wish));
@@ -979,6 +1014,25 @@ function deleteWish(id) {
   if (next === null) return;
   State.wishlist = next;
   render();
+}
+
+/**
+ * Отметить вещь из вишлиста как купленную / снять отметку.
+ * Использует иммутабельное обновление через Storage.replaceItem.
+ */
+function toggleWishPurchase(id) {
+  const wish = State.wishlist.find((w) => w.id === id);
+  if (!wish) return;
+
+  const next = safeStorage(() =>
+    Storage.replaceItem(STORAGE_KEYS.wishlist, id, {
+      purchased: !wish.purchased,
+    })
+  );
+  if (next === null) return;
+  State.wishlist = next;
+  render();
+  Tg.haptic("impact_light");
 }
 
 // Theme
