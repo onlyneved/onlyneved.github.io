@@ -107,18 +107,11 @@
 
       <!-- Вишлист -->
       <section id="view-wishlist" class="view">
-        <div class="task-input wish-input-row" style="flex-wrap:wrap;">
-          <input type="text" id="wishTitle" placeholder="Что хотелось бы..." maxlength="200" style="flex:1;min-width:140px;" />
-          <select id="wishPriority" class="wish-select">
-            <option value="medium">Обычный</option>
-            <option value="high">Важный</option>
-            <option value="low">Низкий</option>
-          </select>
-          <div class="wish-url-price-row">
-            <input type="url" id="wishUrl" placeholder="Ссылка (опц.)" class="wish-input" />
-            <input type="number" id="wishPrice" placeholder="Стоимость (BYN)" class="wish-input wish-price" min="0" step="0.01" />
-          </div>
-          <button class="btn-add" id="btnAddWish">Добавить</button>
+        <div class="task-input wish-input-row">
+          <input type="text" id="wishTitle" placeholder="Что хотелось бы..." maxlength="200" class="wish-title-input" />
+          <input type="url" id="wishUrl" placeholder="Ссылка (опц.)" class="wish-input" />
+          <input type="number" id="wishPrice" placeholder="Стоимость (BYN)" class="wish-input wish-price" min="0" step="0.01" />
+          <button class="btn-add wish-add-btn" id="btnAddWish">Добавить</button>
         </div>
         <ul class="task-list" id="wishlistList"></ul>
         <div class="empty" id="emptyWishlist">Вишлист пуст</div>

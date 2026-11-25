@@ -438,8 +438,9 @@ select:focus-visible,
   color: var(--color-text-primary);
   outline: none;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
-  flex: 1;
+  width: 100%;
   min-width: 120px;
+  box-sizing: border-box;
 }
 
 .wish-input:focus,
@@ -449,17 +450,23 @@ select:focus-visible,
   background: var(--color-surface-hover);
 }
 
-/* Ряд ссылка + цена вишлиста — делят строку пополам */
-.wish-url-price-row {
-  display: flex;
+/* Форма вишлиста — 2 равные колонки: ссылка и стоимость пополам */
+.wish-input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-2);
-  flex: 1;
-  min-width: 200px;
+  align-items: end;
 }
 
-.wish-url-price-row .wish-input {
-  flex: 1;
-  min-width: 0;
+.wish-title-input {
+  grid-column: 1 / -1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.wish-add-btn {
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
 /* Поле цены — тип number */
