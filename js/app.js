@@ -631,7 +631,6 @@ function initTaskListeners() {
     const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
     if (e.target.classList.contains("task-checkbox")) {
-      e.preventDefault();
       toggleTask(id);
     } else if (e.target.classList.contains("btn-delete")) {
       e.preventDefault();
@@ -656,7 +655,6 @@ function initShoppingListeners() {
     const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
     if (e.target.classList.contains("task-checkbox")) {
-      e.preventDefault();
       toggleShopping(id);
     } else if (e.target.classList.contains("btn-delete")) {
       e.preventDefault();
@@ -1477,7 +1475,6 @@ function initHabitListeners() {
     const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
     if (e.target.classList.contains("habit-checkbox")) {
-      e.preventDefault();
       toggleHabit(id);
     } else if (e.target.classList.contains("habit-delete-btn")) {
       e.stopPropagation();
