@@ -374,7 +374,12 @@ function filterTasksForDate(date) {
 
 function isTaskDoneOn(task, date) {
   const doneDates = task.doneDates || [];
-  return task.doneDates ? doneDates.includes(date) : task.done;
+  // Повторяющаяся задача с историей отметок — проверяем по doneDates.
+  // Разовая задача — проверяем по done.
+  if (doneDates.length > 0) {
+    return doneDates.includes(date);
+  }
+  return !!task.done;
 }
 
 function renderTaskItem(task, date) {
