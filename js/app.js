@@ -382,14 +382,17 @@ function renderTaskItem(task, date) {
   const isDone = isTaskDoneOn(task, date);
   li.className = `task-item ${isDone ? "done" : ""}`;
 
+  const checkboxId = `task-checkbox-${task.id}`;
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
+  checkbox.id = checkboxId;
   checkbox.className = "task-checkbox";
   checkbox.dataset.id = task.id;
   checkbox.checked = isDone;
   if (isDone) checkbox.classList.add("task-checkbox--checked");
+  checkbox.setAttribute("aria-checked", String(isDone));
 
-  const title = document.createElement("div");
+  const title = document.createElement("span");
   title.className = "task-title";
   title.dataset.id = task.id;
   title.textContent = escapeHtml(task.title);
@@ -401,14 +404,19 @@ function renderTaskItem(task, date) {
     title.appendChild(badge);
   }
 
+  const label = document.createElement("label");
+  label.className = "task-label";
+  label.htmlFor = checkboxId;
+  label.appendChild(checkbox);
+  label.appendChild(title);
+
   const delBtn = document.createElement("button");
   delBtn.className = "btn-delete";
   delBtn.dataset.id = task.id;
   delBtn.title = "Удалить";
   delBtn.textContent = "×";
 
-  li.appendChild(checkbox);
-  li.appendChild(title);
+  li.appendChild(label);
   li.appendChild(delBtn);
 
   return li;
@@ -467,17 +475,26 @@ function renderShopping() {
     const li = document.createElement("li");
     li.className = `task-item ${item.done ? "done" : ""}`;
 
+    const checkboxId = `shopping-checkbox-${item.id}`;
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
+    checkbox.id = checkboxId;
     checkbox.className = "task-checkbox";
     checkbox.dataset.id = item.id;
     checkbox.checked = item.done;
     if (item.done) checkbox.classList.add("task-checkbox--checked");
+    checkbox.setAttribute("aria-checked", String(item.done));
 
-    const title = document.createElement("div");
+    const title = document.createElement("span");
     title.className = "task-title";
     title.dataset.id = item.id;
     title.textContent = escapeHtml(item.title);
+
+    const label = document.createElement("label");
+    label.className = "task-label";
+    label.htmlFor = checkboxId;
+    label.appendChild(checkbox);
+    label.appendChild(title);
 
     const delBtn = document.createElement("button");
     delBtn.className = "btn-delete";
@@ -485,8 +502,7 @@ function renderShopping() {
     delBtn.title = "Удалить";
     delBtn.textContent = "×";
 
-    li.appendChild(checkbox);
-    li.appendChild(title);
+    li.appendChild(label);
     li.appendChild(delBtn);
     refs.shoppingList.appendChild(li);
   });
@@ -615,8 +631,10 @@ function initTaskListeners() {
     const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
     if (e.target.classList.contains("task-checkbox")) {
+      e.preventDefault();
       toggleTask(id);
     } else if (e.target.classList.contains("btn-delete")) {
+      e.preventDefault();
       deleteTask(id);
     }
   });
@@ -637,8 +655,13 @@ function initShoppingListeners() {
   refs.shoppingList.addEventListener("click", (e) => {
     const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
-    if (e.target.classList.contains("task-checkbox")) toggleShopping(id);
-    else if (e.target.classList.contains("btn-delete")) deleteShopping(id);
+    if (e.target.classList.contains("task-checkbox")) {
+      e.preventDefault();
+      toggleShopping(id);
+    } else if (e.target.classList.contains("btn-delete")) {
+      e.preventDefault();
+      deleteShopping(id);
+    }
   });
 }
 
@@ -1374,11 +1397,14 @@ function renderHabitItem(habit) {
   const li = document.createElement("li");
   li.className = `habit-item ${checked ? "done" : ""}`;
 
+  const checkboxId = `habit-checkbox-${habit.id}`;
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
+  checkbox.id = checkboxId;
   checkbox.className = "habit-checkbox";
   checkbox.dataset.id = habit.id;
   checkbox.checked = checked;
+  checkbox.setAttribute("aria-checked", String(checked));
 
   const fireEl = document.createElement("span");
   fireEl.className = "habit-fire";
@@ -1389,9 +1415,17 @@ function renderHabitItem(habit) {
   streak.className = "habit-streak";
   streak.textContent = habit.streak > 0 ? String(habit.streak || 0) : "";
 
-  const title = document.createElement("div");
+  const title = document.createElement("span");
   title.className = "habit-title";
   title.textContent = escapeHtml(habit.title);
+
+  const label = document.createElement("label");
+  label.className = "habit-label";
+  label.htmlFor = checkboxId;
+  label.appendChild(checkbox);
+  label.appendChild(fireEl);
+  label.appendChild(streak);
+  label.appendChild(title);
 
   const delBtn = document.createElement("button");
   delBtn.className = "habit-delete-btn";
@@ -1399,10 +1433,7 @@ function renderHabitItem(habit) {
   delBtn.title = "Удалить привычку";
   delBtn.textContent = "×";
 
-  li.appendChild(checkbox);
-  li.appendChild(fireEl);
-  li.appendChild(streak);
-  li.appendChild(title);
+  li.appendChild(label);
   li.appendChild(delBtn);
 
   return li;
@@ -1446,6 +1477,7 @@ function initHabitListeners() {
     const id = e.target.closest('[data-id]')?.dataset.id;
     if (!id) return;
     if (e.target.classList.contains("habit-checkbox")) {
+      e.preventDefault();
       toggleHabit(id);
     } else if (e.target.classList.contains("habit-delete-btn")) {
       e.stopPropagation();
